@@ -1,23 +1,13 @@
-// src/components/EditProduct.jsx
 import { useContext, useState, useEffect } from "react";
 import { AppContext } from "../context/AppContext";
+import accordionIcon from "../assets/icons/accordion.svg";
 
 const EditProduct = () => {
   const { selectedProduct, setCurrentPage, fetchProducts } =
     useContext(AppContext);
-
-  const [loading, setLoading] = useState(false);
   const [activeAccordion, setActiveAccordion] = useState(0);
-  // Sizes Form Data
-  const [sizes, setSizes] = useState([]);
-  const [newSize, setNewSize] = useState({
-    sizeName: "",
-    stockQty: 0,
-    is_oos: false,
-  });
-  // Media Form Data
-  const [images, setImages] = useState([]);
-  const [video, setVideo] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const [basicInfo, setBasicInfo] = useState({
     shortTitle: "",
     longTitle: "",
@@ -28,6 +18,15 @@ const EditProduct = () => {
     stockQty: "",
     status: false,
   });
+
+  const [sizes, setSizes] = useState([]);
+  const [newSize, setNewSize] = useState({
+    sizeName: "",
+    stockQty: 0,
+    is_oos: false,
+  });
+  const [images, setImages] = useState([]);
+  const [video, setVideo] = useState("");
 
   useEffect(() => {
     if (selectedProduct) {
@@ -86,13 +85,7 @@ const EditProduct = () => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const updateData = {
-        ...basicInfo,
-        sizes,
-        images,
-        video,
-      };
-
+      const updateData = { ...basicInfo, sizes, images, video };
       const response = await fetch(
         `https://glitzzera-backend.vercel.app/api/products/${selectedProduct._id}`,
         {
@@ -101,7 +94,6 @@ const EditProduct = () => {
           body: JSON.stringify(updateData),
         }
       );
-
       if (response.ok) {
         await fetchProducts();
         setCurrentPage("products");
@@ -118,71 +110,43 @@ const EditProduct = () => {
   }
 
   return (
-    <div className="min-h-screen bg-jewelry-gradient p-6">
+    <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="flex items-center mb-8">
+        <div className="flex items-center mb-6">
           <button
             onClick={() => setCurrentPage("products")}
-            className="flex items-center text-amber-700 hover:text-amber-800 mr-6 transition-colors"
+            className="flex items-center text-gray-600 hover:text-gray-800 mr-4"
           >
-            <svg
-              className="w-5 h-5 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-            Back to Products
+            ← Back to Products
           </button>
-          <h1 className="text-4xl font-light text-gray-800">Edit Product</h1>
+          <h1 className="text-2xl font-semibold text-gray-900">Edit Product</h1>
         </div>
 
         {/* Accordion Container */}
-        <div className="glass-effect rounded-3xl shadow-jewelry overflow-hidden">
+        <div className="bg-neutral-200 rounded-lg shadow-sm overflow-hidden">
           {/* Accordion 1: Basic Information */}
-          <div className="border-b border-amber-100">
+          <div className="border-b border-gray-200">
             <button
               onClick={() => setActiveAccordion(activeAccordion === 0 ? -1 : 0)}
-              className="w-full px-8 py-6 text-left flex justify-between items-center hover:bg-amber-50/50 transition-all duration-300"
+              className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-neutral-200 transition-colors"
             >
-              <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-gold-gradient mr-4"></div>
-                <span className="text-xl font-light text-gray-800">
-                  Basic Information
-                </span>
-              </div>
-              <div
-                className={`transform transition-transform duration-300 ${
-                  activeAccordion === 0 ? "rotate-45" : ""
+              <span className="text-lg font-medium text-gray-900">
+                Basic Information
+              </span>
+              <img
+                src={accordionIcon}
+                alt="accordion"
+                className={`w-5 h-5 transform transition-transform filter brightness-0 ${
+                  activeAccordion === 0 ? "rotate-180" : ""
                 }`}
-              >
-                <svg
-                  className="w-6 h-6 text-amber-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
-              </div>
+              />
             </button>
             {activeAccordion === 0 && (
-              <div className="px-8 pb-8 bg-gradient-to-br from-white/80 to-amber-50/30">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">
+              <div className="px-6 pb-6 bg-neutral-200">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       Short Title
                     </label>
                     <input
@@ -190,11 +154,11 @@ const EditProduct = () => {
                       name="shortTitle"
                       value={basicInfo.shortTitle}
                       onChange={handleBasicInfoChange}
-                      className="w-full px-4 py-3 bg-white/70 rounded-2xl shadow-soft focus:outline-none focus:ring-2 focus:ring-amber-300 focus:bg-white transition-all duration-300"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       Long Title
                     </label>
                     <input
@@ -202,11 +166,11 @@ const EditProduct = () => {
                       name="longTitle"
                       value={basicInfo.longTitle}
                       onChange={handleBasicInfoChange}
-                      className="w-full px-4 py-3 bg-white/70 rounded-2xl shadow-soft focus:outline-none focus:ring-2 focus:ring-amber-300 focus:bg-white transition-all duration-300"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       Price (₹)
                     </label>
                     <input
@@ -214,11 +178,11 @@ const EditProduct = () => {
                       name="price"
                       value={basicInfo.price}
                       onChange={handleBasicInfoChange}
-                      className="w-full px-4 py-3 bg-white/70 rounded-2xl shadow-soft focus:outline-none focus:ring-2 focus:ring-amber-300 focus:bg-white transition-all duration-300"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       Discount Price (₹)
                     </label>
                     <input
@@ -226,11 +190,11 @@ const EditProduct = () => {
                       name="discountPrice"
                       value={basicInfo.discountPrice}
                       onChange={handleBasicInfoChange}
-                      className="w-full px-4 py-3 bg-white/70 rounded-2xl shadow-soft focus:outline-none focus:ring-2 focus:ring-amber-300 focus:bg-white transition-all duration-300"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       Stock Quantity
                     </label>
                     <input
@@ -238,26 +202,25 @@ const EditProduct = () => {
                       name="stockQty"
                       value={basicInfo.stockQty}
                       onChange={handleBasicInfoChange}
-                      className="w-full px-4 py-3 bg-white/70 rounded-2xl shadow-soft focus:outline-none focus:ring-2 focus:ring-amber-300 focus:bg-white transition-all duration-300"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-                  <div className="flex items-center space-x-3 pt-8">
+                  <div className="flex items-center pt-6">
                     <input
                       type="checkbox"
                       name="status"
                       checked={basicInfo.status}
                       onChange={handleBasicInfoChange}
-                      className="w-5 h-5 text-amber-600 bg-white/70 rounded-lg focus:ring-amber-300"
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                     />
-                    <label className="text-sm font-medium text-gray-700">
+                    <label className="ml-2 text-sm text-gray-700">
                       Active Status
                     </label>
                   </div>
                 </div>
-
-                <div className="space-y-6 mb-8">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">
+                <div className="space-y-4 mb-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       Short Description
                     </label>
                     <textarea
@@ -265,11 +228,11 @@ const EditProduct = () => {
                       value={basicInfo.shortDesc}
                       onChange={handleBasicInfoChange}
                       rows="2"
-                      className="w-full px-4 py-3 bg-white/70 rounded-2xl shadow-soft focus:outline-none focus:ring-2 focus:ring-amber-300 focus:bg-white transition-all duration-300 resize-none"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       Long Description
                     </label>
                     <textarea
@@ -277,14 +240,13 @@ const EditProduct = () => {
                       value={basicInfo.longDesc}
                       onChange={handleBasicInfoChange}
                       rows="4"
-                      className="w-full px-4 py-3 bg-white/70 rounded-2xl shadow-soft focus:outline-none focus:ring-2 focus:ring-amber-300 focus:bg-white transition-all duration-300 resize-none"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 </div>
-
                 <button
                   onClick={() => setActiveAccordion(1)}
-                  className="px-8 py-3 bg-gold-gradient text-white rounded-2xl shadow-soft hover:shadow-jewelry transition-all duration-300 font-medium"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                 >
                   Next: Sizes →
                 </button>
@@ -293,44 +255,29 @@ const EditProduct = () => {
           </div>
 
           {/* Accordion 2: Sizes */}
-          <div className="border-b border-amber-100">
+          <div className="border-b border-gray-200">
             <button
               onClick={() => setActiveAccordion(activeAccordion === 1 ? -1 : 1)}
-              className="w-full px-8 py-6 text-left flex justify-between items-center hover:bg-amber-50/50 transition-all duration-300"
+              className="w-full px-6 py-4 text-left flex justify-between items-center transition-colors"
             >
-              <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-rose-gold-gradient mr-4"></div>
-                <span className="text-xl font-light text-gray-800">
-                  Sizes Management
-                </span>
-              </div>
-              <div
-                className={`transform transition-transform duration-300 ${
-                  activeAccordion === 1 ? "rotate-45" : ""
+              <span className="text-lg font-medium text-gray-900">
+                Sizes Management
+              </span>
+              <img
+                src={accordionIcon}
+                alt="accordion"
+                className={`w-5 h-5 transform transition-transform filter brightness-0 ${
+                  activeAccordion === 1 ? "rotate-180" : ""
                 }`}
-              >
-                <svg
-                  className="w-6 h-6 text-amber-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
-              </div>
+              />
             </button>
             {activeAccordion === 1 && (
-              <div className="px-8 pb-8 bg-gradient-to-br from-white/80 to-rose-100/30">
-                <div className="space-y-4 mb-6">
+              <div className="px-6 pb-6 bg-neutral-200">
+                <div className="space-y-3 mb-4">
                   {sizes.map((size, index) => (
                     <div
                       key={size._id}
-                      className="flex items-center gap-4 p-4 bg-white/60 rounded-2xl shadow-soft"
+                      className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-md"
                     >
                       <input
                         type="text"
@@ -338,7 +285,7 @@ const EditProduct = () => {
                         onChange={(e) =>
                           handleUpdateSize(index, "sizeName", e.target.value)
                         }
-                        className="w-20 px-3 py-2 bg-white/80 rounded-xl shadow-soft focus:outline-none focus:ring-2 focus:ring-rose-300"
+                        className="w-20 px-2 py-1 border border-gray-300 rounded bg-white"
                         placeholder="Size"
                       />
                       <input
@@ -351,25 +298,23 @@ const EditProduct = () => {
                             parseInt(e.target.value)
                           )
                         }
-                        className="w-24 px-3 py-2 bg-white/80 rounded-xl shadow-soft focus:outline-none focus:ring-2 focus:ring-rose-300"
+                        className="w-24 px-2 py-1 border border-gray-300 rounded bg-white"
                         placeholder="Qty"
                       />
-                      <label className="flex items-center space-x-2">
+                      <label className="flex items-center">
                         <input
                           type="checkbox"
                           checked={size.is_oos}
                           onChange={(e) =>
                             handleUpdateSize(index, "is_oos", e.target.checked)
                           }
-                          className="w-4 h-4 text-rose-600 bg-white/80 rounded focus:ring-rose-300"
+                          className="mr-1"
                         />
-                        <span className="text-sm text-gray-700">
-                          Out of Stock
-                        </span>
+                        Out of Stock
                       </label>
                       <button
                         onClick={() => handleDeleteSize(index)}
-                        className="ml-auto px-3 py-1 text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                        className="text-red-600 hover:text-red-800 px-2 py-1"
                       >
                         Delete
                       </button>
@@ -377,18 +322,16 @@ const EditProduct = () => {
                   ))}
                 </div>
 
-                <div className="p-4 bg-white/40 rounded-2xl shadow-soft mb-6">
-                  <h3 className="font-medium text-gray-800 mb-3">
-                    Add New Size
-                  </h3>
-                  <div className="flex items-center gap-3">
+                <div className="p-3 bg-white border border-gray-200 rounded-md mb-6">
+                  <h3 className="font-medium mb-2">Add New Size</h3>
+                  <div className="flex items-center gap-2">
                     <input
                       type="text"
                       value={newSize.sizeName}
                       onChange={(e) =>
                         setNewSize({ ...newSize, sizeName: e.target.value })
                       }
-                      className="w-20 px-3 py-2 bg-white/80 rounded-xl shadow-soft focus:outline-none focus:ring-2 focus:ring-rose-300"
+                      className="w-20 px-2 py-1 border border-gray-300 rounded"
                       placeholder="Size"
                     />
                     <input
@@ -400,12 +343,12 @@ const EditProduct = () => {
                           stockQty: parseInt(e.target.value),
                         })
                       }
-                      className="w-24 px-3 py-2 bg-white/80 rounded-xl shadow-soft focus:outline-none focus:ring-2 focus:ring-rose-300"
+                      className="w-24 px-2 py-1 border border-gray-300 rounded"
                       placeholder="Qty"
                     />
                     <button
                       onClick={handleAddSize}
-                      className="px-4 py-2 bg-rose-gold-gradient text-white rounded-xl shadow-soft hover:shadow-jewelry transition-all duration-300"
+                      className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
                     >
                       Add Size
                     </button>
@@ -414,7 +357,7 @@ const EditProduct = () => {
 
                 <button
                   onClick={() => setActiveAccordion(2)}
-                  className="px-8 py-3 bg-rose-gold-gradient text-white rounded-2xl shadow-soft hover:shadow-jewelry transition-all duration-300 font-medium"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                 >
                   Next: Media →
                 </button>
@@ -426,44 +369,27 @@ const EditProduct = () => {
           <div>
             <button
               onClick={() => setActiveAccordion(activeAccordion === 2 ? -1 : 2)}
-              className="w-full px-8 py-6 text-left flex justify-between items-center hover:bg-amber-50/50 transition-all duration-300"
+              className="w-full px-6 py-4 text-left flex justify-between items-centertransition-colors"
             >
-              <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-gradient-to-r from-amber-400 to-rose-400 mr-4"></div>
-                <span className="text-xl font-light text-gray-800">
-                  Images & Video
-                </span>
-              </div>
-              <div
-                className={`transform transition-transform duration-300 ${
-                  activeAccordion === 2 ? "rotate-45" : ""
+              <span className="text-lg font-medium text-gray-900">
+                Images & Video
+              </span>
+              <img
+                src={accordionIcon}
+                alt="accordion"
+                className={`w-5 h-5 transform transition-transform filter brightness-0 ${
+                  activeAccordion === 2 ? "rotate-180" : ""
                 }`}
-              >
-                <svg
-                  className="w-6 h-6 text-amber-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
-              </div>
+              />
             </button>
             {activeAccordion === 2 && (
-              <div className="px-8 pb-8 bg-gradient-to-br from-white/80 to-amber-50/30">
-                <div className="mb-8">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-medium text-gray-800">
-                      Product Images
-                    </h3>
+              <div className="px-6 pb-6 bg-neutral-200">
+                <div className="mb-6">
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="font-medium">Product Images</h3>
                     <button
                       onClick={handleAddImage}
-                      className="px-4 py-2 bg-gold-gradient text-white rounded-xl shadow-soft hover:shadow-jewelry transition-all duration-300"
+                      className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
                     >
                       Add Image
                     </button>
@@ -474,11 +400,11 @@ const EditProduct = () => {
                         <img
                           src={image}
                           alt={`Product ${index + 1}`}
-                          className="w-full h-32 object-cover rounded-2xl shadow-soft group-hover:shadow-jewelry transition-all duration-300"
+                          className="w-full h-24 object-cover rounded border"
                         />
                         <button
                           onClick={() => handleDeleteImage(index)}
-                          className="absolute -top-2 -right-2 w-8 h-8 bg-red-500 text-white rounded-full shadow-soft hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                          className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-sm hover:bg-red-600 opacity-0 group-hover:opacity-100"
                         >
                           ×
                         </button>
@@ -487,15 +413,15 @@ const EditProduct = () => {
                   </div>
                 </div>
 
-                <div className="mb-8">
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Product Video URL
                   </label>
                   <input
                     type="url"
                     value={video}
                     onChange={(e) => setVideo(e.target.value)}
-                    className="w-full px-4 py-3 bg-white/70 rounded-2xl shadow-soft focus:outline-none focus:ring-2 focus:ring-amber-300 focus:bg-white transition-all duration-300"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="https://example.com/video.mp4"
                   />
                 </div>
@@ -503,9 +429,9 @@ const EditProduct = () => {
                 <button
                   onClick={handleSubmit}
                   disabled={loading}
-                  className="px-8 py-4 bg-gradient-to-r from-amber-500 to-rose-500 text-white rounded-2xl shadow-jewelry hover:shadow-2xl transition-all duration-300 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
                 >
-                  {loading ? "Updating..." : "Update Product ✨"}
+                  {loading ? "Updating..." : "Update Product"}
                 </button>
               </div>
             )}
