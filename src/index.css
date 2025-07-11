@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+/* Custom jewelry-themed colors and gradients */
+.bg-jewelry-gradient {
+  background: linear-gradient(135deg, #f8f4f0 0%, #faf7f2 100%);
+}
+
+.bg-gold-gradient {
+  background: linear-gradient(135deg, #d4af37 0%, #f4e4bc 100%);
+}
+
+.bg-rose-gold-gradient {
+  background: linear-gradient(135deg, #e8b4b8 0%, #f5d5d7 100%);
+}
+
+.shadow-jewelry {
+  box-shadow: 0 8px 32px rgba(212, 175, 55, 0.1);
+}
+
+.shadow-soft {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.glass-effect {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.9);
+}
