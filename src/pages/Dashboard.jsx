@@ -19,8 +19,10 @@ const Dashboard = () => {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-gray-500 text-sm">Total Products</h3>
-          <p className="text-2xl font-bold">{stats.totalProducts}</p>
+          <h3 className="text-gray-600 text-sm">Total Products</h3>
+          <p className="text-2xl text-gray-500 font-bold">
+            {stats.totalProducts}
+          </p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow">
           <h3 className="text-gray-500 text-sm">Active Products</h3>
@@ -41,7 +43,9 @@ const Dashboard = () => {
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
+          <h3 className="text-lg text-gray-700 font-semibold mb-4">
+            Quick Actions
+          </h3>
           <div className="space-y-2">
             <button className="w-full text-left px-4 py-2 bg-blue-50 text-blue-700 rounded hover:bg-blue-100">
               Add New Product
@@ -56,7 +60,9 @@ const Dashboard = () => {
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-4">Recent Activity</h3>
+          <h3 className="text-lg text-gray-700 font-semibold mb-4">
+            Recent Activity
+          </h3>
           <div className="space-y-3 text-sm text-gray-600">
             <div>• New product added: Gold Necklace</div>
             <div>• Order #1234 completed</div>
@@ -66,7 +72,7 @@ const Dashboard = () => {
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-4">Alerts</h3>
+          <h3 className="text-lg text-gray-700 font-semibold mb-4">Alerts</h3>
           <div className="space-y-2">
             {stats.lowStock > 0 && (
               <div className="p-2 bg-orange-50 text-orange-700 rounded text-sm">

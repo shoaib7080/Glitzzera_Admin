@@ -4,10 +4,32 @@ import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
 import Products from "./pages/Products";
 import EditProduct from "./components/EditProducts";
+import Categories from "./pages/Categories";
+import Customers from "./pages/Customers";
+import Login from "./pages/Login";
 
 const App = () => {
-  const { currentPage } = useContext(AppContext);
+  const {
+    currentPage,
+    isAuthenticated,
+    login,
+    loading,
+    toggleSidebar,
+    sidebarOpen,
+  } = useContext(AppContext);
 
+  // Show loading screen while checking auth
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-xl">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Login onLogin={login} />;
+  }
   // Render different components based on the current page
   const renderPage = () => {
     switch (currentPage) {
@@ -17,7 +39,10 @@ const App = () => {
         return <Products />;
       case "editProduct":
         return <EditProduct />;
-      // Add more cases for other pages as needed
+      case "categories":
+        return <Categories />;
+      case "customers":
+        return <Customers />;
       default:
         return <Dashboard />;
     }
@@ -27,7 +52,7 @@ const App = () => {
   return (
     <div className="flex bg-gray-100 min-h-screen">
       <Sidebar />
-      <div className="flex-1">{renderPage()}</div>
+      <div className="flex-1 ml-16 md:ml-0">{renderPage()}</div>
     </div>
   );
 };

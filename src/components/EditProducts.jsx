@@ -71,10 +71,11 @@ const EditProduct = () => {
     setSizes(sizes.filter((_, i) => i !== index));
   };
 
-  const handleAddImage = () => {
-    const url = prompt("Enter image URL:");
-    if (url) {
-      setImages([...images, url]);
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Store the actual file object for FormData
+      setImages([...images, file]);
     }
   };
 
@@ -85,18 +86,40 @@ const EditProduct = () => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const updateData = { ...basicInfo, sizes, images, video };
+      const formData = new FormData();
+
+      // Add basic info fields
+      Object.keys(basicInfo).forEach((key) => {
+        formData.append(key, basicInfo[key]);
+      });
+
+      // Add sizes as JSON string
+      formData.append("sizes", JSON.stringify(sizes));
+
+      // Add video URL
+      formData.append("video", video);
+
+      // Add image files
+      images.forEach((image, index) => {
+        if (image instanceof File) {
+          formData.append("images", image);
+        }
+      });
+
       const response = await fetch(
         `https://glitzzera-backend.vercel.app/api/products/${selectedProduct._id}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updateData),
+          body: formData, // Don't set Content-Type header for FormData
         }
       );
+
       if (response.ok) {
         await fetchProducts();
         setCurrentPage("products");
+      } else {
+        const errorData = await response.json();
+        console.error("Update failed:", errorData);
       }
     } catch (error) {
       console.error("Error updating product:", error);
@@ -154,7 +177,7 @@ const EditProduct = () => {
                       name="shortTitle"
                       value={basicInfo.shortTitle}
                       onChange={handleBasicInfoChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   <div>
@@ -166,7 +189,7 @@ const EditProduct = () => {
                       name="longTitle"
                       value={basicInfo.longTitle}
                       onChange={handleBasicInfoChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   <div>
@@ -178,7 +201,7 @@ const EditProduct = () => {
                       name="price"
                       value={basicInfo.price}
                       onChange={handleBasicInfoChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   <div>
@@ -190,7 +213,7 @@ const EditProduct = () => {
                       name="discountPrice"
                       value={basicInfo.discountPrice}
                       onChange={handleBasicInfoChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 text-gray-700 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   <div>
@@ -202,7 +225,7 @@ const EditProduct = () => {
                       name="stockQty"
                       value={basicInfo.stockQty}
                       onChange={handleBasicInfoChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 text-gray-700 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   <div className="flex items-center pt-6">
@@ -211,7 +234,7 @@ const EditProduct = () => {
                       name="status"
                       checked={basicInfo.status}
                       onChange={handleBasicInfoChange}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500  border-gray-300 rounded"
                     />
                     <label className="ml-2 text-sm text-gray-700">
                       Active Status
@@ -228,7 +251,7 @@ const EditProduct = () => {
                       value={basicInfo.shortDesc}
                       onChange={handleBasicInfoChange}
                       rows="2"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   <div>
@@ -240,7 +263,7 @@ const EditProduct = () => {
                       value={basicInfo.longDesc}
                       onChange={handleBasicInfoChange}
                       rows="4"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 </div>
@@ -277,7 +300,7 @@ const EditProduct = () => {
                   {sizes.map((size, index) => (
                     <div
                       key={size._id}
-                      className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-md"
+                      className="flex items-center gap-3 p-3 bg-white border border-gray-300 rounded-md"
                     >
                       <input
                         type="text"
@@ -285,7 +308,7 @@ const EditProduct = () => {
                         onChange={(e) =>
                           handleUpdateSize(index, "sizeName", e.target.value)
                         }
-                        className="w-20 px-2 py-1 border border-gray-300 rounded bg-white"
+                        className="w-20 px-2 py-1 border text-gray-700 border-gray-300 rounded bg-white"
                         placeholder="Size"
                       />
                       <input
@@ -298,7 +321,7 @@ const EditProduct = () => {
                             parseInt(e.target.value)
                           )
                         }
-                        className="w-24 px-2 py-1 border border-gray-300 rounded bg-white"
+                        className="w-24 px-2 py-1 border border-gray-300 rounded text-gray-700 bg-white"
                         placeholder="Qty"
                       />
                       <label className="flex items-center">
@@ -322,7 +345,7 @@ const EditProduct = () => {
                   ))}
                 </div>
 
-                <div className="p-3 bg-white border border-gray-200 rounded-md mb-6">
+                <div className="p-3 bg-white border  border-gray-300 rounded-md mb-6">
                   <h3 className="font-medium mb-2">Add New Size</h3>
                   <div className="flex items-center gap-2">
                     <input
@@ -331,7 +354,7 @@ const EditProduct = () => {
                       onChange={(e) =>
                         setNewSize({ ...newSize, sizeName: e.target.value })
                       }
-                      className="w-20 px-2 py-1 border border-gray-300 rounded"
+                      className="w-20 px-2 py-1 border text-gray-700 border-gray-300 rounded"
                       placeholder="Size"
                     />
                     <input
@@ -343,7 +366,7 @@ const EditProduct = () => {
                           stockQty: parseInt(e.target.value),
                         })
                       }
-                      className="w-24 px-2 py-1 border border-gray-300 rounded"
+                      className="w-24 px-2 py-1 border text-gray-700 border-gray-300 rounded"
                       placeholder="Qty"
                     />
                     <button
@@ -369,7 +392,7 @@ const EditProduct = () => {
           <div>
             <button
               onClick={() => setActiveAccordion(activeAccordion === 2 ? -1 : 2)}
-              className="w-full px-6 py-4 text-left flex justify-between items-centertransition-colors"
+              className="w-full px-6 py-4 text-left flex justify-between items-center transition-colors"
             >
               <span className="text-lg font-medium text-gray-900">
                 Images & Video
@@ -383,22 +406,18 @@ const EditProduct = () => {
               />
             </button>
             {activeAccordion === 2 && (
-              <div className="px-6 pb-6 bg-neutral-200">
+              <div className="px-6 pb-6">
                 <div className="mb-6">
-                  <div className="flex justify-between items-center mb-3">
-                    <h3 className="font-medium">Product Images</h3>
-                    <button
-                      onClick={handleAddImage}
-                      className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
-                    >
-                      Add Image
-                    </button>
-                  </div>
+                  <h3 className="font-medium mb-3">Product Images</h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {images.map((image, index) => (
                       <div key={index} className="relative group">
                         <img
-                          src={image}
+                          src={
+                            image instanceof File
+                              ? URL.createObjectURL(image)
+                              : image
+                          }
                           alt={`Product ${index + 1}`}
                           className="w-full h-24 object-cover rounded border"
                         />
@@ -410,6 +429,30 @@ const EditProduct = () => {
                         </button>
                       </div>
                     ))}
+
+                    {/* Add Image Div - Only show if less than 4 images */}
+                    {images.length < 4 && (
+                      <div
+                        onClick={() =>
+                          document.getElementById("imageInput").click()
+                        }
+                        className="w-full h-24 border-2 border-dashed border-gray-300 rounded flex items-center justify-center cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-colors"
+                      >
+                        <div className="text-center">
+                          <div className="text-2xl text-gray-400 mb-1">+</div>
+                          <div className="text-xs text-gray-500">Add Image</div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Hidden File Input */}
+                    <input
+                      id="imageInput"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
                   </div>
                 </div>
 
@@ -421,7 +464,7 @@ const EditProduct = () => {
                     type="url"
                     value={video}
                     onChange={(e) => setVideo(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 text-gray-700 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="https://example.com/video.mp4"
                   />
                 </div>

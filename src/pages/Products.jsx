@@ -1,15 +1,45 @@
 // src/components/Products.jsx
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AppContext } from "../context/AppContext";
 
 const Products = () => {
-  const { products, loading, setCurrentPage, setSelectedProduct } =
-    useContext(AppContext);
+  const {
+    products,
+    loading,
+    setCurrentPage,
+    setSelectedProduct,
+    fetchProducts,
+  } = useContext(AppContext);
+  const [deleting, setDeleting] = useState(null);
 
   // Function to handle product selection for editing
   const handleEditProduct = (product) => {
     setSelectedProduct(product);
     setCurrentPage("editProduct");
+  };
+
+  const handleDeleteProduct = async (product) => {
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      setDeleting(product._id);
+      try {
+        const response = await fetch(
+          `https://glitzzera-backend.vercel.app/api/products/${product._id}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (response.ok) {
+          await fetchProducts();
+        } else {
+          console.error("Delete failed");
+        }
+      } catch (error) {
+        console.error("Error deleting product:", error);
+      } finally {
+        setDeleting(null);
+      }
+    }
   };
 
   if (loading) {
@@ -125,7 +155,9 @@ const Products = () => {
                   <td className="px-6 py-4 text-sm">
                     <div className="flex items-center">
                       <span className="text-yellow-400">★</span>
-                      <span className="ml-1">{product.ratings}/5</span>
+                      <span className="ml-1 text-gray-700">
+                        {product.ratings}/5
+                      </span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
@@ -146,8 +178,12 @@ const Products = () => {
                     >
                       Edit
                     </button>
-                    <button className="text-red-600 hover:text-red-900">
-                      Delete
+                    <button
+                      onClick={() => handleDeleteProduct(product)}
+                      disabled={deleting === product._id}
+                      className="text-red-600 hover:text-red-900"
+                    >
+                      {deleting === product._id ? "Deleting..." : "Delete"}
                     </button>
                   </td>
                 </tr>
