@@ -78,11 +78,11 @@ const Sidebar = () => {
       </div>
 
       {/* Mobile Sidebar - Fixed width container */}
-      <div className="md:hidden bg-gradient-to-b from-gray-900 to-gray-800 text-white w-16 min-h-screen fixed z-50">
+      <div className="md:hidden bg-gradient-to-b from-gray-900 to-gray-800 text-white w-12 min-h-screen fixed z-50">
         {/* Toggle Button - Fixed position */}
         <button
           onClick={toggleSidebar}
-          className="absolute top-3 left-3 p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+          className="absolute top-3 left-1.5 p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
         >
           <svg
             className="w-5 h-5"
@@ -109,7 +109,7 @@ const Sidebar = () => {
         </button>
 
         {/* Menu Items - Fixed icon positions */}
-        <nav className="pt-16 space-y-2 px-3">
+        <nav className="pt-16 space-y-2 flex justify-center flex-col">
           {menuItems.map((item, index) => (
             <button
               key={item.key}
@@ -117,7 +117,7 @@ const Sidebar = () => {
                 setCurrentPage(item.key);
                 if (sidebarOpen) toggleSidebar();
               }}
-              className={`relative w-10 h-10 rounded-lg transition-all duration-200 flex items-center justify-center ${
+              className={`relative w-full h-10 transition-all duration-200 flex items-center justify-center ${
                 currentPage === item.key
                   ? "bg-blue-500/10 text-blue-200"
                   : "hover:bg-white/5 text-gray-300 hover:text-white"
@@ -166,7 +166,7 @@ const Sidebar = () => {
             className="md:hidden fixed inset-0 bg-black/20 bg-opacity-50 z-40"
             onClick={toggleSidebar}
           />
-          <div className="md:hidden bg-gradient-to-b from-gray-900 to-gray-800 text-white w-48 min-h-screen fixed left-16 z-50 py-4 transform transition-transform duration-300 ease-in-out">
+          <div className="md:hidden bg-gradient-to-b from-gray-900 to-gray-800 text-white w-48 min-h-screen fixed left-12 z-50 py-4 transform transition-transform duration-300 ease-in-out">
             {/* Menu Items with text */}
             <nav className="pt-12 space-y-2">
               {menuItems.map((item) => (
@@ -176,7 +176,7 @@ const Sidebar = () => {
                     setCurrentPage(item.key);
                     toggleSidebar();
                   }}
-                  className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 ${
+                  className={`w-full text-left px-3 py-2 transition-all duration-200 ${
                     currentPage === item.key
                       ? "bg-blue-500/10 text-blue-200"
                       : "hover:bg-white/5 text-gray-300 hover:text-white"
