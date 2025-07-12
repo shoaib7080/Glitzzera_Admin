@@ -4,7 +4,7 @@ import { AppContext } from "../context/AppContext";
 import EditCategoryModal from "../components/EditCategoryModal";
 
 const Categories = () => {
-  const { categories, products, loading, fetchCategories } =
+  const { categories, products, loading, fetchCategories, setCurrentPage } =
     useContext(AppContext);
   const [deleting, setDeleting] = useState(null);
   const [editingCategory, setEditingCategory] = useState(null);
@@ -61,8 +61,13 @@ const Categories = () => {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Categories ({categories.length})</h1>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        <h1 className="text-3xl text-black font-bold">
+          Categories ({categories.length})
+        </h1>
+        <button
+          onClick={() => setCurrentPage("addCategory")}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
           Add Category
         </button>
       </div>

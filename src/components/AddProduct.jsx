@@ -1,10 +1,10 @@
-import { useContext, useState, useEffect } from "react";
+// src/components/AddProduct.jsx
+import { useContext, useState } from "react";
 import { AppContext } from "../context/AppContext";
 import accordionIcon from "../assets/icons/accordion.svg";
 
-const EditProduct = () => {
-  const { selectedProduct, setCurrentPage, fetchProducts } =
-    useContext(AppContext);
+const AddProduct = () => {
+  const { setCurrentPage, fetchProducts, categories } = useContext(AppContext);
   const [activeAccordion, setActiveAccordion] = useState(0);
   const [loading, setLoading] = useState(false);
 
@@ -17,6 +17,7 @@ const EditProduct = () => {
     discountPrice: "",
     stockQty: "",
     status: false,
+    category: "",
   });
 
   const [sizes, setSizes] = useState([]);
@@ -26,25 +27,7 @@ const EditProduct = () => {
     is_oos: false,
   });
   const [images, setImages] = useState([]);
-  const [video, setVideo] = useState("");
-
-  useEffect(() => {
-    if (selectedProduct) {
-      setBasicInfo({
-        shortTitle: selectedProduct.shortTitle || "",
-        longTitle: selectedProduct.longTitle || "",
-        shortDesc: selectedProduct.shortDesc || "",
-        longDesc: selectedProduct.longDesc || "",
-        price: selectedProduct.price || "",
-        discountPrice: selectedProduct.discountPrice || "",
-        stockQty: selectedProduct.stockQty || "",
-        status: selectedProduct.status || false,
-      });
-      setSizes([...(selectedProduct.sizes || [])]);
-      setImages([...(selectedProduct.images || [])]);
-      setVideo(selectedProduct.video || "");
-    }
-  }, [selectedProduct]);
+  const [video, setVideo] = useState(null);
 
   const handleBasicInfoChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -73,14 +56,20 @@ const EditProduct = () => {
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      // Store the actual file object for FormData
+    if (file && images.length < 4) {
       setImages([...images, file]);
     }
   };
 
   const handleDeleteImage = (index) => {
     setImages(images.filter((_, i) => i !== index));
+  };
+
+  const handleVideoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setVideo(file);
+    }
   };
 
   const handleSubmit = async () => {
@@ -97,21 +86,21 @@ const EditProduct = () => {
       const cleanSizes = sizes.map(({ _id, ...size }) => size);
       formData.append("sizes", JSON.stringify(cleanSizes));
 
-      // Add video URL
-      formData.append("video", video);
+      // Add video file
+      if (video) {
+        formData.append("video", video);
+      }
 
       // Add image files
-      images.forEach((image, index) => {
-        if (image instanceof File) {
-          formData.append("images", image);
-        }
+      images.forEach((image) => {
+        formData.append("images", image);
       });
 
       const response = await fetch(
-        `https://glitzzera-backend.vercel.app/api/products/${selectedProduct._id}`,
+        "https://glitzzera-backend.vercel.app/api/products",
         {
-          method: "PUT",
-          body: formData, // Don't set Content-Type header for FormData
+          method: "POST",
+          body: formData,
         }
       );
 
@@ -120,18 +109,14 @@ const EditProduct = () => {
         setCurrentPage("products");
       } else {
         const errorData = await response.json();
-        console.error("Update failed:", errorData);
+        console.error("Create failed:", errorData);
       }
     } catch (error) {
-      console.error("Error updating product:", error);
+      console.error("Error creating product:", error);
     } finally {
       setLoading(false);
     }
   };
-
-  if (!selectedProduct) {
-    return <div className="p-6">No product selected</div>;
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -144,13 +129,15 @@ const EditProduct = () => {
           >
             ← Back to Products
           </button>
-          <h1 className="text-2xl font-semibold text-gray-900">Edit Product</h1>
+          <h1 className="text-2xl font-semibold text-gray-900">
+            Add New Product
+          </h1>
         </div>
 
         {/* Accordion Container */}
         <div className="bg-neutral-200 rounded-lg shadow-sm overflow-hidden">
           {/* Accordion 1: Basic Information */}
-          <div className="border-b border-gray-200">
+          <div className="border-b border-gray-300">
             <button
               onClick={() => setActiveAccordion(activeAccordion === 0 ? -1 : 0)}
               className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-neutral-200 transition-colors"
@@ -195,6 +182,24 @@ const EditProduct = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Category
+                    </label>
+                    <select
+                      name="category"
+                      value={basicInfo.category}
+                      onChange={handleBasicInfoChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Select Category</option>
+                      {categories.map((cat) => (
+                        <option key={cat._id} value={cat._id}>
+                          {cat.catname}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       Price (₹)
                     </label>
                     <input
@@ -235,7 +240,7 @@ const EditProduct = () => {
                       name="status"
                       checked={basicInfo.status}
                       onChange={handleBasicInfoChange}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500  border-gray-300 rounded"
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                     />
                     <label className="ml-2 text-sm text-gray-700">
                       Active Status
@@ -279,7 +284,7 @@ const EditProduct = () => {
           </div>
 
           {/* Accordion 2: Sizes */}
-          <div className="border-b border-gray-200">
+          <div className="border-b border-gray-300">
             <button
               onClick={() => setActiveAccordion(activeAccordion === 1 ? -1 : 1)}
               className="w-full px-6 py-4 text-left flex justify-between items-center transition-colors"
@@ -296,7 +301,7 @@ const EditProduct = () => {
               />
             </button>
             {activeAccordion === 1 && (
-              <div className="px-6 pb-6 bg-neutral-200">
+              <div className="px-6 pb-6 text-gray-700 bg-neutral-200">
                 <div className="space-y-3 mb-4">
                   {sizes.map((size, index) => (
                     <div
@@ -346,7 +351,7 @@ const EditProduct = () => {
                   ))}
                 </div>
 
-                <div className="p-3 bg-white border  border-gray-300 rounded-md mb-6">
+                <div className="p-3 bg-white border border-gray-300 rounded-md mb-6">
                   <h3 className="font-medium mb-2">Add New Size</h3>
                   <div className="flex items-center gap-2">
                     <input
@@ -407,18 +412,14 @@ const EditProduct = () => {
               />
             </button>
             {activeAccordion === 2 && (
-              <div className="px-6 pb-6">
+              <div className="px-6 text-gray-700 pb-6">
                 <div className="mb-6">
-                  <h3 className="font-medium mb-3">Product Images</h3>
+                  <h3 className="font-medium mb-3">Product Images (Max 4)</h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {images.map((image, index) => (
                       <div key={index} className="relative group">
                         <img
-                          src={
-                            image instanceof File
-                              ? URL.createObjectURL(image)
-                              : image
-                          }
+                          src={URL.createObjectURL(image)}
                           alt={`Product ${index + 1}`}
                           className="w-full h-24 object-cover rounded border"
                         />
@@ -458,15 +459,40 @@ const EditProduct = () => {
                 </div>
 
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Product Video URL
-                  </label>
+                  <h3 className="font-medium mb-3">Product Video (Optional)</h3>
+                  {video ? (
+                    <div className="relative group">
+                      <video
+                        src={URL.createObjectURL(video)}
+                        className="w-full h-32 object-cover rounded border"
+                        controls
+                      />
+                      <button
+                        onClick={() => setVideo(null)}
+                        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-sm hover:bg-red-600 opacity-0 group-hover:opacity-100"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ) : (
+                    <div
+                      onClick={() =>
+                        document.getElementById("videoInput").click()
+                      }
+                      className="w-full h-32 border-2 border-dashed border-gray-300 rounded flex items-center justify-center cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="text-center">
+                        <div className="text-2xl text-gray-400 mb-1">📹</div>
+                        <div className="text-xs text-gray-500">Add Video</div>
+                      </div>
+                    </div>
+                  )}
                   <input
-                    type="url"
-                    value={video}
-                    onChange={(e) => setVideo(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 text-gray-700 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="https://example.com/video.mp4"
+                    id="videoInput"
+                    type="file"
+                    accept="video/*"
+                    onChange={handleVideoUpload}
+                    className="hidden"
                   />
                 </div>
 
@@ -475,7 +501,7 @@ const EditProduct = () => {
                   disabled={loading}
                   className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
                 >
-                  {loading ? "Updating..." : "Update Product"}
+                  {loading ? "Creating..." : "Create Product"}
                 </button>
               </div>
             )}
@@ -486,4 +512,4 @@ const EditProduct = () => {
   );
 };
 
-export default EditProduct;
+export default AddProduct;

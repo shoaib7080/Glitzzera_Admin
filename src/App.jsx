@@ -7,6 +7,8 @@ import EditProduct from "./components/EditProducts";
 import Categories from "./pages/Categories";
 import Customers from "./pages/Customers";
 import Login from "./pages/Login";
+import AddProduct from "./components/AddProduct";
+import AddCategory from "./components/AddCategory";
 
 const App = () => {
   const {
@@ -39,8 +41,12 @@ const App = () => {
         return <Products />;
       case "editProduct":
         return <EditProduct />;
+      case "addProduct":
+        return <AddProduct />;
       case "categories":
         return <Categories />;
+      case "addCategory":
+        return <AddCategory />;
       case "customers":
         return <Customers />;
       default:
