@@ -77,16 +77,12 @@ const Sidebar = () => {
         </button>
       </div>
 
-      {/* Mobile Sidebar */}
-      <div
-        className={`md:hidden bg-gradient-to-b from-gray-900 to-gray-800 text-white min-h-screen p-3 flex flex-col fixed z-50 transition-all duration-300 ease-in-out ${
-          sidebarOpen ? "w-64" : "w-16"
-        }`}
-      >
-        {/* Toggle Button */}
+      {/* Mobile Sidebar - Fixed width container */}
+      <div className="md:hidden bg-gradient-to-b from-gray-900 to-gray-800 text-white w-16 min-h-screen fixed z-50">
+        {/* Toggle Button - Fixed position */}
         <button
           onClick={toggleSidebar}
-          className="mb-6 p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors self-start"
+          className="absolute top-3 left-3 p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
         >
           <svg
             className="w-5 h-5"
@@ -112,18 +108,16 @@ const Sidebar = () => {
           </svg>
         </button>
 
-        {/* Menu Items */}
-        <nav className="space-y-2 flex-1">
-          {menuItems.map((item) => (
+        {/* Menu Items - Fixed icon positions */}
+        <nav className="pt-16 space-y-2 px-3">
+          {menuItems.map((item, index) => (
             <button
               key={item.key}
               onClick={() => {
                 setCurrentPage(item.key);
                 if (sidebarOpen) toggleSidebar();
               }}
-              className={`w-full p-3 rounded-lg transition-all duration-200 flex items-center ${
-                sidebarOpen ? "justify-start space-x-3" : "justify-center"
-              } ${
+              className={`relative w-10 h-10 rounded-lg transition-all duration-200 flex items-center justify-center ${
                 currentPage === item.key
                   ? "bg-blue-500/10 text-blue-200"
                   : "hover:bg-white/5 text-gray-300 hover:text-white"
@@ -133,31 +127,24 @@ const Sidebar = () => {
               <img
                 src={item.icon}
                 alt={item.label}
-                className={`w-5 h-5 flex-shrink-0 ${
+                className={`w-5 h-5 ${
                   currentPage === item.key
                     ? "filter brightness-0 invert opacity-80"
                     : "filter brightness-0 invert opacity-60"
                 }`}
               />
-              {sidebarOpen && (
-                <span className="font-light whitespace-nowrap overflow-hidden">
-                  {item.label}
-                </span>
-              )}
             </button>
           ))}
         </nav>
 
-        {/* Logout Button */}
+        {/* Logout Button - Fixed position */}
         <button
           onClick={logout}
-          className={`w-full p-3 rounded-lg transition-all duration-200 text-gray-300 hover:text-white hover:bg-red-500/10 mt-4 flex items-center ${
-            sidebarOpen ? "justify-start space-x-3" : "justify-center"
-          }`}
+          className="absolute bottom-4 left-3 w-10 h-10 rounded-lg transition-all duration-200 text-gray-300 hover:text-white hover:bg-red-500/10 flex items-center justify-center"
           title={!sidebarOpen ? "Logout" : undefined}
         >
           <svg
-            className="w-5 h-5 flex-shrink-0"
+            className="w-5 h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -169,20 +156,46 @@ const Sidebar = () => {
               d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
             />
           </svg>
-          {sidebarOpen && (
-            <span className="font-light whitespace-nowrap overflow-hidden">
-              Logout
-            </span>
-          )}
         </button>
       </div>
 
-      {/* Mobile Overlay */}
+      {/* Mobile Expanded Panel - Slides from right */}
       {sidebarOpen && (
-        <div
-          className="md:hidden fixed inset-0 bg-black/20 bg-opacity-50 z-40"
-          onClick={toggleSidebar}
-        />
+        <>
+          <div
+            className="md:hidden fixed inset-0 bg-black/20 bg-opacity-50 z-40"
+            onClick={toggleSidebar}
+          />
+          <div className="md:hidden bg-gradient-to-b from-gray-900 to-gray-800 text-white w-48 min-h-screen fixed left-16 z-50 py-4 transform transition-transform duration-300 ease-in-out">
+            {/* Menu Items with text */}
+            <nav className="pt-12 space-y-2">
+              {menuItems.map((item) => (
+                <button
+                  key={item.key}
+                  onClick={() => {
+                    setCurrentPage(item.key);
+                    toggleSidebar();
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 ${
+                    currentPage === item.key
+                      ? "bg-blue-500/10 text-blue-200"
+                      : "hover:bg-white/5 text-gray-300 hover:text-white"
+                  }`}
+                >
+                  <span className="font-light">{item.label}</span>
+                </button>
+              ))}
+            </nav>
+
+            {/* Logout text */}
+            <button
+              onClick={logout}
+              className="absolute bottom-4 left-4 right-4 text-left px-3 py-2 rounded-lg transition-all duration-200 text-gray-300 hover:text-white hover:bg-red-500/10"
+            >
+              <span className="font-light">Logout</span>
+            </button>
+          </div>
+        </>
       )}
     </>
   );
