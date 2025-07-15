@@ -61,37 +61,33 @@ const Products = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="bg-white border-b border-gray-200 p-6 mb-6">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-3xl text-black font-bold">
-            Products ({filteredProducts.length})
-          </h1>
-          <div className="flex">
-            <button
-              onClick={() => {
-                setCurrentPage("addProduct");
-              }}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-            >
-              Add Product
-            </button>
-            <div className="flex justify-end">
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="px-4 py-2 border placeholder-gray-400 text-gray-700 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
-              />
-            </div>
-          </div>
+    <div className="h-screen flex flex-col p-6 ">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
+        <h1 className="text-2xl sm:text-3xl text-black font-bold">
+          Products ({filteredProducts.length})
+        </h1>
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="px-4 py-2 border placeholder-gray-400 text-gray-700 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            onClick={() => {
+              setCurrentPage("addProduct");
+            }}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Add Product
+          </button>
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow">
-        <div className="overflow-x-auto h-screen">
-          <table className="w-full">
+      <div className="bg-white rounded-lg shadow p-2 sm:p-4 lg:p-8 overflow-auto">
+        <div className="overflow-x-auto relative">
+          <table className="w-full relative">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
@@ -115,7 +111,7 @@ const Products = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase sticky">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase sticky right-0 bg-gray-50 shadow-lg">
                   Actions
                 </th>
               </tr>
@@ -201,7 +197,7 @@ const Products = () => {
                       {product.status ? "Active" : "Inactive"}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm">
+                  <td className="px-6 py-4 text-sm sticky right-0 bg-white shadow-lg">
                     <button
                       onClick={() => handleEditProduct(product)}
                       className="text-blue-600 hover:text-blue-900 mr-3"
