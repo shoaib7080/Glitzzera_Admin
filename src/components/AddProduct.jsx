@@ -97,7 +97,7 @@ const AddProduct = () => {
       });
 
       const response = await fetch(
-        "https://glitzzera-backend.vercel.app/api/products",
+        `${import.meta.env.VITE_BACKEND_URL}/api/products`,
         {
           method: "POST",
           body: formData,
@@ -119,392 +119,415 @@ const AddProduct = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center mb-6">
-          <button
-            onClick={() => setCurrentPage("products")}
-            className="flex items-center text-gray-600 hover:text-gray-800 mr-4"
-          >
-            ← Back to Products
-          </button>
-          <h1 className="text-2xl font-semibold text-gray-900">
-            Add New Product
-          </h1>
-        </div>
-
-        {/* Accordion Container */}
-        <div className="bg-neutral-200 rounded-lg shadow-sm overflow-hidden">
-          {/* Accordion 1: Basic Information */}
-          <div className="border-b border-gray-300">
+    <div className="h-screen flex flex-col bg-gray-50">
+      {/* Header */}
+      <div className="flex-shrink-0 bg-white border-b border-gray-200 p-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center">
             <button
-              onClick={() => setActiveAccordion(activeAccordion === 0 ? -1 : 0)}
-              className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-neutral-200 transition-colors"
+              onClick={() => setCurrentPage("products")}
+              className="flex items-center text-gray-600 hover:text-gray-800 mr-4"
             >
-              <span className="text-lg font-medium text-gray-900">
-                Basic Information
-              </span>
-              <img
-                src={accordionIcon}
-                alt="accordion"
-                className={`w-5 h-5 transform transition-transform filter brightness-0 ${
-                  activeAccordion === 0 ? "rotate-180" : ""
-                }`}
-              />
+              ← Back to Products
             </button>
-            {activeAccordion === 0 && (
-              <div className="px-6 pb-6 bg-neutral-200">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Short Title
-                    </label>
-                    <input
-                      type="text"
-                      name="shortTitle"
-                      value={basicInfo.shortTitle}
-                      onChange={handleBasicInfoChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Long Title
-                    </label>
-                    <input
-                      type="text"
-                      name="longTitle"
-                      value={basicInfo.longTitle}
-                      onChange={handleBasicInfoChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Category
-                    </label>
-                    <select
-                      name="category"
-                      value={basicInfo.category}
-                      onChange={handleBasicInfoChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="">Select Category</option>
-                      {categories.map((cat) => (
-                        <option key={cat._id} value={cat._id}>
-                          {cat.catname}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Price (₹)
-                    </label>
-                    <input
-                      type="number"
-                      name="price"
-                      value={basicInfo.price}
-                      onChange={handleBasicInfoChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Discount Price (₹)
-                    </label>
-                    <input
-                      type="number"
-                      name="discountPrice"
-                      value={basicInfo.discountPrice}
-                      onChange={handleBasicInfoChange}
-                      className="w-full px-3 py-2 border border-gray-300 text-gray-700 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Stock Quantity
-                    </label>
-                    <input
-                      type="number"
-                      name="stockQty"
-                      value={basicInfo.stockQty}
-                      onChange={handleBasicInfoChange}
-                      className="w-full px-3 py-2 border border-gray-300 text-gray-700 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div className="flex items-center pt-6">
-                    <input
-                      type="checkbox"
-                      name="status"
-                      checked={basicInfo.status}
-                      onChange={handleBasicInfoChange}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                    <label className="ml-2 text-sm text-gray-700">
-                      Active Status
-                    </label>
-                  </div>
-                </div>
-                <div className="space-y-4 mb-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Short Description
-                    </label>
-                    <textarea
-                      name="shortDesc"
-                      value={basicInfo.shortDesc}
-                      onChange={handleBasicInfoChange}
-                      rows="2"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Long Description
-                    </label>
-                    <textarea
-                      name="longDesc"
-                      value={basicInfo.longDesc}
-                      onChange={handleBasicInfoChange}
-                      rows="4"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-                <button
-                  onClick={() => setActiveAccordion(1)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                >
-                  Next: Sizes →
-                </button>
-              </div>
-            )}
+            <h1 className="text-2xl font-semibold text-gray-900">
+              Add New Product
+            </h1>
           </div>
+        </div>
+      </div>
 
-          {/* Accordion 2: Sizes */}
-          <div className="border-b border-gray-300">
-            <button
-              onClick={() => setActiveAccordion(activeAccordion === 1 ? -1 : 1)}
-              className="w-full px-6 py-4 text-left flex justify-between items-center transition-colors"
-            >
-              <span className="text-lg font-medium text-gray-900">
-                Sizes Management
-              </span>
-              <img
-                src={accordionIcon}
-                alt="accordion"
-                className={`w-5 h-5 transform transition-transform filter brightness-0 ${
-                  activeAccordion === 1 ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-            {activeAccordion === 1 && (
-              <div className="px-6 pb-6 text-gray-700 bg-neutral-200">
-                <div className="space-y-3 mb-4">
-                  {sizes.map((size, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center gap-3 p-3 bg-white border border-gray-300 rounded-md"
-                    >
+      {/* Accordion Container */}
+      <div
+        className="flex-1 overflow-y-auto p-6"
+        style={{ scrollbarWidth: "none" }}
+      >
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-neutral-200 rounded-lg shadow-sm overflow-hidden">
+            {/* Accordion 1: Basic Information */}
+            <div className="border-b border-gray-300">
+              <button
+                onClick={() =>
+                  setActiveAccordion(activeAccordion === 0 ? -1 : 0)
+                }
+                className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-neutral-200 transition-colors"
+              >
+                <span className="text-lg font-medium text-gray-900">
+                  Basic Information
+                </span>
+                <img
+                  src={accordionIcon}
+                  alt="accordion"
+                  className={`w-5 h-5 transform transition-transform filter brightness-0 ${
+                    activeAccordion === 0 ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+              {activeAccordion === 0 && (
+                <div className="px-6 pb-6 bg-neutral-200">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Short Title
+                      </label>
                       <input
                         type="text"
-                        value={size.sizeName}
+                        name="shortTitle"
+                        value={basicInfo.shortTitle}
+                        onChange={handleBasicInfoChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Long Title
+                      </label>
+                      <input
+                        type="text"
+                        name="longTitle"
+                        value={basicInfo.longTitle}
+                        onChange={handleBasicInfoChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Category
+                      </label>
+                      <select
+                        name="category"
+                        value={basicInfo.category}
+                        onChange={handleBasicInfoChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="">Select Category</option>
+                        {categories.map((cat) => (
+                          <option key={cat._id} value={cat._id}>
+                            {cat.catname}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Price (₹)
+                      </label>
+                      <input
+                        type="number"
+                        name="price"
+                        value={basicInfo.price}
+                        onChange={handleBasicInfoChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Discount Price (₹)
+                      </label>
+                      <input
+                        type="number"
+                        name="discountPrice"
+                        value={basicInfo.discountPrice}
+                        onChange={handleBasicInfoChange}
+                        className="w-full px-3 py-2 border border-gray-300 text-gray-700 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Stock Quantity
+                      </label>
+                      <input
+                        type="number"
+                        name="stockQty"
+                        value={basicInfo.stockQty}
+                        onChange={handleBasicInfoChange}
+                        className="w-full px-3 py-2 border border-gray-300 text-gray-700 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div className="flex items-center pt-6">
+                      <input
+                        type="checkbox"
+                        name="status"
+                        checked={basicInfo.status}
+                        onChange={handleBasicInfoChange}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                      <label className="ml-2 text-sm text-gray-700">
+                        Active Status
+                      </label>
+                    </div>
+                  </div>
+                  <div className="space-y-4 mb-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Short Description
+                      </label>
+                      <textarea
+                        name="shortDesc"
+                        value={basicInfo.shortDesc}
+                        onChange={handleBasicInfoChange}
+                        rows="2"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Long Description
+                      </label>
+                      <textarea
+                        name="longDesc"
+                        value={basicInfo.longDesc}
+                        onChange={handleBasicInfoChange}
+                        rows="4"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setActiveAccordion(1)}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                  >
+                    Next: Sizes →
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Accordion 2: Sizes */}
+            <div className="border-b border-gray-300">
+              <button
+                onClick={() =>
+                  setActiveAccordion(activeAccordion === 1 ? -1 : 1)
+                }
+                className="w-full px-6 py-4 text-left flex justify-between items-center transition-colors"
+              >
+                <span className="text-lg font-medium text-gray-900">
+                  Sizes Management
+                </span>
+                <img
+                  src={accordionIcon}
+                  alt="accordion"
+                  className={`w-5 h-5 transform transition-transform filter brightness-0 ${
+                    activeAccordion === 1 ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+              {activeAccordion === 1 && (
+                <div className="px-6 pb-6 text-gray-700 bg-neutral-200">
+                  <div className="space-y-3 mb-4">
+                    {sizes.map((size, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-3 p-3 bg-white border border-gray-300 rounded-md"
+                      >
+                        <input
+                          type="text"
+                          value={size.sizeName}
+                          onChange={(e) =>
+                            handleUpdateSize(index, "sizeName", e.target.value)
+                          }
+                          className="w-20 px-2 py-1 border text-gray-700 border-gray-300 rounded bg-white"
+                          placeholder="Size"
+                        />
+                        <input
+                          type="number"
+                          value={size.stockQty}
+                          onChange={(e) =>
+                            handleUpdateSize(
+                              index,
+                              "stockQty",
+                              parseInt(e.target.value)
+                            )
+                          }
+                          className="w-24 px-2 py-1 border border-gray-300 rounded text-gray-700 bg-white"
+                          placeholder="Qty"
+                        />
+                        <label className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={size.is_oos}
+                            onChange={(e) =>
+                              handleUpdateSize(
+                                index,
+                                "is_oos",
+                                e.target.checked
+                              )
+                            }
+                            className="mr-1"
+                          />
+                          Out of Stock
+                        </label>
+                        <button
+                          onClick={() => handleDeleteSize(index)}
+                          className="text-red-600 hover:text-red-800 px-2 py-1"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="p-3 bg-white border border-gray-300 rounded-md mb-6">
+                    <h3 className="font-medium mb-2">Add New Size</h3>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={newSize.sizeName}
                         onChange={(e) =>
-                          handleUpdateSize(index, "sizeName", e.target.value)
+                          setNewSize({ ...newSize, sizeName: e.target.value })
                         }
-                        className="w-20 px-2 py-1 border text-gray-700 border-gray-300 rounded bg-white"
+                        className="w-20 px-2 py-1 border text-gray-700 border-gray-300 rounded"
                         placeholder="Size"
                       />
                       <input
                         type="number"
-                        value={size.stockQty}
+                        value={newSize.stockQty}
                         onChange={(e) =>
-                          handleUpdateSize(
-                            index,
-                            "stockQty",
-                            parseInt(e.target.value)
-                          )
+                          setNewSize({
+                            ...newSize,
+                            stockQty: parseInt(e.target.value),
+                          })
                         }
-                        className="w-24 px-2 py-1 border border-gray-300 rounded text-gray-700 bg-white"
+                        className="w-24 px-2 py-1 border text-gray-700 border-gray-300 rounded"
                         placeholder="Qty"
                       />
-                      <label className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={size.is_oos}
-                          onChange={(e) =>
-                            handleUpdateSize(index, "is_oos", e.target.checked)
-                          }
-                          className="mr-1"
-                        />
-                        Out of Stock
-                      </label>
                       <button
-                        onClick={() => handleDeleteSize(index)}
-                        className="text-red-600 hover:text-red-800 px-2 py-1"
+                        onClick={handleAddSize}
+                        className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
                       >
-                        Delete
+                        Add Size
                       </button>
                     </div>
-                  ))}
-                </div>
-
-                <div className="p-3 bg-white border border-gray-300 rounded-md mb-6">
-                  <h3 className="font-medium mb-2">Add New Size</h3>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={newSize.sizeName}
-                      onChange={(e) =>
-                        setNewSize({ ...newSize, sizeName: e.target.value })
-                      }
-                      className="w-20 px-2 py-1 border text-gray-700 border-gray-300 rounded"
-                      placeholder="Size"
-                    />
-                    <input
-                      type="number"
-                      value={newSize.stockQty}
-                      onChange={(e) =>
-                        setNewSize({
-                          ...newSize,
-                          stockQty: parseInt(e.target.value),
-                        })
-                      }
-                      className="w-24 px-2 py-1 border text-gray-700 border-gray-300 rounded"
-                      placeholder="Qty"
-                    />
-                    <button
-                      onClick={handleAddSize}
-                      className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
-                    >
-                      Add Size
-                    </button>
                   </div>
+
+                  <button
+                    onClick={() => setActiveAccordion(2)}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                  >
+                    Next: Media →
+                  </button>
                 </div>
+              )}
+            </div>
 
-                <button
-                  onClick={() => setActiveAccordion(2)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                >
-                  Next: Media →
-                </button>
-              </div>
-            )}
-          </div>
+            {/* Accordion 3: Images & Video */}
+            <div>
+              <button
+                onClick={() =>
+                  setActiveAccordion(activeAccordion === 2 ? -1 : 2)
+                }
+                className="w-full px-6 py-4 text-left flex justify-between items-center transition-colors"
+              >
+                <span className="text-lg font-medium text-gray-900">
+                  Images & Video
+                </span>
+                <img
+                  src={accordionIcon}
+                  alt="accordion"
+                  className={`w-5 h-5 transform transition-transform filter brightness-0 ${
+                    activeAccordion === 2 ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+              {activeAccordion === 2 && (
+                <div className="px-6 text-gray-700 pb-6">
+                  <div className="mb-6">
+                    <h3 className="font-medium mb-3">Product Images (Max 4)</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {images.map((image, index) => (
+                        <div key={index} className="relative group">
+                          <img
+                            src={URL.createObjectURL(image)}
+                            alt={`Product ${index + 1}`}
+                            className="w-full h-24 object-cover rounded border"
+                          />
+                          <button
+                            onClick={() => handleDeleteImage(index)}
+                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-sm hover:bg-red-600 opacity-0 group-hover:opacity-100"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
 
-          {/* Accordion 3: Images & Video */}
-          <div>
-            <button
-              onClick={() => setActiveAccordion(activeAccordion === 2 ? -1 : 2)}
-              className="w-full px-6 py-4 text-left flex justify-between items-center transition-colors"
-            >
-              <span className="text-lg font-medium text-gray-900">
-                Images & Video
-              </span>
-              <img
-                src={accordionIcon}
-                alt="accordion"
-                className={`w-5 h-5 transform transition-transform filter brightness-0 ${
-                  activeAccordion === 2 ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-            {activeAccordion === 2 && (
-              <div className="px-6 text-gray-700 pb-6">
-                <div className="mb-6">
-                  <h3 className="font-medium mb-3">Product Images (Max 4)</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {images.map((image, index) => (
-                      <div key={index} className="relative group">
-                        <img
-                          src={URL.createObjectURL(image)}
-                          alt={`Product ${index + 1}`}
-                          className="w-full h-24 object-cover rounded border"
+                      {/* Add Image Div - Only show if less than 4 images */}
+                      {images.length < 4 && (
+                        <div
+                          onClick={() =>
+                            document.getElementById("imageInput").click()
+                          }
+                          className="w-full h-24 border-2 border-dashed border-gray-300 rounded flex items-center justify-center cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-colors"
+                        >
+                          <div className="text-center">
+                            <div className="text-2xl text-gray-400 mb-1">+</div>
+                            <div className="text-xs text-gray-500">
+                              Add Image
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Hidden File Input */}
+                      <input
+                        id="imageInput"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <h3 className="font-medium mb-3">
+                      Product Video (Optional)
+                    </h3>
+                    {video ? (
+                      <div className="relative group">
+                        <video
+                          src={URL.createObjectURL(video)}
+                          className="w-full h-32 object-cover rounded border"
+                          controls
                         />
                         <button
-                          onClick={() => handleDeleteImage(index)}
+                          onClick={() => setVideo(null)}
                           className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-sm hover:bg-red-600 opacity-0 group-hover:opacity-100"
                         >
                           ×
                         </button>
                       </div>
-                    ))}
-
-                    {/* Add Image Div - Only show if less than 4 images */}
-                    {images.length < 4 && (
+                    ) : (
                       <div
                         onClick={() =>
-                          document.getElementById("imageInput").click()
+                          document.getElementById("videoInput").click()
                         }
-                        className="w-full h-24 border-2 border-dashed border-gray-300 rounded flex items-center justify-center cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-colors"
+                        className="w-full h-32 border-2 border-dashed border-gray-300 rounded flex items-center justify-center cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-colors"
                       >
                         <div className="text-center">
-                          <div className="text-2xl text-gray-400 mb-1">+</div>
-                          <div className="text-xs text-gray-500">Add Image</div>
+                          <div className="text-2xl text-gray-400 mb-1">📹</div>
+                          <div className="text-xs text-gray-500">Add Video</div>
                         </div>
                       </div>
                     )}
-
-                    {/* Hidden File Input */}
                     <input
-                      id="imageInput"
+                      id="videoInput"
                       type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
+                      accept="video/*"
+                      onChange={handleVideoUpload}
                       className="hidden"
                     />
                   </div>
-                </div>
 
-                <div className="mb-6">
-                  <h3 className="font-medium mb-3">Product Video (Optional)</h3>
-                  {video ? (
-                    <div className="relative group">
-                      <video
-                        src={URL.createObjectURL(video)}
-                        className="w-full h-32 object-cover rounded border"
-                        controls
-                      />
-                      <button
-                        onClick={() => setVideo(null)}
-                        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-sm hover:bg-red-600 opacity-0 group-hover:opacity-100"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ) : (
-                    <div
-                      onClick={() =>
-                        document.getElementById("videoInput").click()
-                      }
-                      className="w-full h-32 border-2 border-dashed border-gray-300 rounded flex items-center justify-center cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-colors"
-                    >
-                      <div className="text-center">
-                        <div className="text-2xl text-gray-400 mb-1">📹</div>
-                        <div className="text-xs text-gray-500">Add Video</div>
-                      </div>
-                    </div>
-                  )}
-                  <input
-                    id="videoInput"
-                    type="file"
-                    accept="video/*"
-                    onChange={handleVideoUpload}
-                    className="hidden"
-                  />
+                  <button
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+                  >
+                    {loading ? "Creating..." : "Create Product"}
+                  </button>
                 </div>
-
-                <button
-                  onClick={handleSubmit}
-                  disabled={loading}
-                  className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
-                >
-                  {loading ? "Creating..." : "Create Product"}
-                </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>

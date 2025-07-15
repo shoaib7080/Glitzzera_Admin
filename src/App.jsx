@@ -9,16 +9,12 @@ import Customers from "./pages/Customers";
 import Login from "./pages/Login";
 import AddProduct from "./components/AddProduct";
 import AddCategory from "./components/AddCategory";
+import OrderPage from "./pages/OrderPage";
 
 const App = () => {
-  const {
-    currentPage,
-    isAuthenticated,
-    login,
-    loading,
-    toggleSidebar,
-    sidebarOpen,
-  } = useContext(AppContext);
+  const context = useContext(AppContext);
+
+  const { currentPage, isAuthenticated, login, loading } = context;
 
   // Show loading screen while checking auth
   if (loading) {
@@ -47,6 +43,8 @@ const App = () => {
         return <Categories />;
       case "addCategory":
         return <AddCategory />;
+      case "orderPage":
+        return <OrderPage />;
       case "customers":
         return <Customers />;
       default:
@@ -58,7 +56,7 @@ const App = () => {
   return (
     <div className="flex bg-gray-100 min-h-screen">
       <Sidebar />
-      <div className="flex-1 ml-16 md:ml-0">{renderPage()}</div>
+      <div className="flex-1 ml-12 md:ml-0">{renderPage()}</div>
     </div>
   );
 };

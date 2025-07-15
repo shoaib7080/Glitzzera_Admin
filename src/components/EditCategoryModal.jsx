@@ -52,7 +52,7 @@ const EditCategoryModal = memo(({ category, isOpen, onClose }) => {
       }
 
       const response = await fetch(
-        `https://glitzzera-backend.vercel.app/api/categories/${category._id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/categories/${category._id}`,
         {
           method: "PUT",
           body: formDataToSend,

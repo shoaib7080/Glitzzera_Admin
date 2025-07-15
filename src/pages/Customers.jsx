@@ -1,59 +1,18 @@
 // src/pages/Customers.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { AppContext } from "../context/AppContext";
+import ViewOrderModal from "../components/ViewOrderModal";
 
 const Customers = () => {
+  const { setCurrentPage, setSelectedOrder } = useContext(AppContext);
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-
-  // Dummy data
-  const dummyCustomers = [
-    {
-      _id: "64a1b2c3d4e5f6789012345a",
-      name: "Priya Sharma",
-      email: "priya.sharma@gmail.com",
-      phone: "+91 9876543210",
-      status: true,
-      orderCount: 5,
-      createdAt: "2024-01-15T10:30:00Z",
-    },
-    {
-      _id: "64a1b2c3d4e5f6789012345b",
-      name: "Rahul Gupta",
-      email: "rahul.gupta@yahoo.com",
-      phone: "+91 8765432109",
-      status: true,
-      orderCount: 2,
-      createdAt: "2024-02-20T14:45:00Z",
-    },
-    {
-      _id: "64a1b2c3d4e5f6789012345c",
-      name: "Anita Patel",
-      email: "anita.patel@hotmail.com",
-      phone: "+91 7654321098",
-      status: false,
-      orderCount: 0,
-      createdAt: "2024-03-10T09:15:00Z",
-    },
-    {
-      _id: "64a1b2c3d4e5f6789012345d",
-      name: "Vikram Singh",
-      email: "vikram.singh@gmail.com",
-      phone: "+91 6543210987",
-      status: true,
-      orderCount: 8,
-      createdAt: "2024-01-05T16:20:00Z",
-    },
-    {
-      _id: "64a1b2c3d4e5f6789012345e",
-      name: "Meera Joshi",
-      email: "meera.joshi@outlook.com",
-      phone: "+91 5432109876",
-      status: true,
-      orderCount: 3,
-      createdAt: "2024-04-12T11:30:00Z",
-    },
-  ];
+  const [expandedCustomer, setExpandedCustomer] = useState(null);
+  const [viewOrderModal, setViewOrderModal] = useState({
+    isOpen: false,
+    order: null,
+  });
 
   useEffect(() => {
     fetchCustomers();
@@ -61,15 +20,11 @@ const Customers = () => {
 
   const fetchCustomers = async () => {
     try {
-      // const response = await fetch(
-      //   "https://glitzzera-backend.vercel.app/api/customers"
-      // );
-      // const data = await response.json();
-      // setCustomers(data.customers || data || []);
-
-      // SImulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setCustomers(dummyCustomers);
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/info`
+      );
+      const data = await response.json();
+      setCustomers(data.detailedUsers || []);
     } catch (error) {
       console.error("Error fetching customers:", error);
       setCustomers([]);
@@ -78,39 +33,48 @@ const Customers = () => {
     }
   };
 
-  const handleStatusToggle = async (customerId, currentStatus) => {
-    try {
-      // const response = await fetch(
-      //   `https://glitzzera-backend.vercel.app/api/customers/${customerId}`,
-      //   {
-      //     method: "PUT",
-      //     headers: { "Content-Type": "application/json" },
-      //     body: JSON.stringify({ status: !currentStatus }),
-      //   }
-      // );
-      // if (response.ok) {
-      //   await fetchCustomers();
-      // }
+  const filteredCustomers = customers.filter(
+    (customer) =>
+      customer.user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      customer.user.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      setCustomers((prev) =>
-        prev.map((customer) =>
-          customer._id === customerId
-            ? { ...customer, status: !currentStatus }
-            : customer
-        )
+  const toggleExpand = (customerId) => {
+    setExpandedCustomer(expandedCustomer === customerId ? null : customerId);
+  };
+
+  const handleViewOrder = async (order) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/orders/${order._id}`
       );
+      const fullOrderData = await response.json();
+      setViewOrderModal({ isOpen: true, order: fullOrderData });
     } catch (error) {
-      console.error("Error updating customer status:", error);
+      console.error("Error fetching order details:", error);
+      // Fallback to basic order data if API fails
+      setViewOrderModal({ isOpen: true, order });
     }
   };
 
-  const filteredCustomers = customers.filter(
-    (customer) =>
-      customer.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.email?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleUpdateOrderStatus = async (orderId, newStatus) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/orders/${orderId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ orderStatus: newStatus }),
+        }
+      );
+      if (response.ok) {
+        // Refresh customer data to show updated order status
+        await fetchCustomers();
+      }
+    } catch (error) {
+      console.error("Error updating order status:", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -121,7 +85,7 @@ const Customers = () => {
   }
 
   return (
-    <div className="p-6">
+    <div className="h-screen flex flex-col p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl text-gray-900 font-bold">
           Customers ({customers.length})
@@ -137,98 +101,187 @@ const Customers = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Customer
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Contact
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Joined
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Orders
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredCustomers.map((customer) => (
-                <tr key={customer._id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10">
-                        <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium">
-                          {customer.name?.charAt(0).toUpperCase() || "U"}
-                        </div>
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">
-                          {customer.name || "Unknown"}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          ID: {customer._id?.slice(-8)}
-                        </div>
-                      </div>
+      <div
+        className="space-y-4 overflow-y-auto flex-1 pr-2 "
+        style={{ scrollbarWidth: "none" }}
+      >
+        {filteredCustomers.map((customer) => (
+          <div
+            key={customer.user._id}
+            className="bg-white rounded-lg shadow-sm border border-gray-300 overflow-hidden"
+          >
+            {/* Customer Summary */}
+            <div className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <img
+                    src={customer.user.avatar}
+                    alt={customer.user.name}
+                    className="w-12 h-12 rounded-full object-cover"
+                    onError={(e) => {
+                      e.target.src = `https://ui-avatars.com/api/?name=${customer.user.name}&background=3b82f6&color=fff`;
+                    }}
+                  />
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      {customer.user.name}
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                      {customer.user.email}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-6">
+                  <div className="text-center">
+                    <div className="text-lg font-semibold text-gray-900">
+                      {customer.orders.length}
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-xs text-gray-500">Orders</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg font-semibold text-gray-900">
+                      {customer.wishlistItems.length}
+                    </div>
+                    <div className="text-xs text-gray-500">Wishlist</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xs text-gray-500">Joined</div>
                     <div className="text-sm text-gray-900">
-                      {customer.email}
+                      {new Date(customer.user.createdAt).toLocaleDateString()}
                     </div>
-                    <div className="text-sm text-gray-500">
-                      {customer.phone || "N/A"}
+                  </div>
+                  <button
+                    onClick={() => toggleExpand(customer.user._id)}
+                    className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                  >
+                    {expandedCustomer === customer.user._id
+                      ? "Hide Details"
+                      : "View Details"}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Expanded Details */}
+            {expandedCustomer === customer.user._id && (
+              <div className="border-t border-gray-300 bg-gray-50 p-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Contact Info */}
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-3">
+                      Contact Information
+                    </h4>
+                    <div className="space-y-2 text-sm">
+                      <div>
+                        <span className="text-gray-500">Phone:</span>
+                        <span className="ml-2 text-gray-900">
+                          {customer.user.phone}
+                        </span>
+                      </div>
+                      {customer.user.alternatePhone && (
+                        <div>
+                          <span className="text-gray-500">Alt Phone:</span>
+                          <span className="ml-2 text-gray-900">
+                            {customer.user.alternatePhone}
+                          </span>
+                        </div>
+                      )}
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(customer.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {customer.orderCount || 0}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        customer.status
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {customer.status ? "Active" : "Blocked"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button
-                      onClick={() =>
-                        handleStatusToggle(customer._id, customer.status)
-                      }
-                      className={`mr-3 ${
-                        customer.status
-                          ? "text-red-600 hover:text-red-900"
-                          : "text-green-600 hover:text-green-900"
-                      }`}
-                    >
-                      {customer.status ? "Block" : "Unblock"}
-                    </button>
-                    <button className="text-blue-600 hover:text-blue-900">
-                      View Details
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  </div>
+
+                  {/* Wishlist Items */}
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-3">
+                      Wishlist Items ({customer.wishlistItems.length})
+                    </h4>
+                    {customer.wishlistItems.length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {customer.wishlistItems.slice(0, 3).map((item) => (
+                          <div
+                            key={item._id}
+                            className="bg-white px-3 py-1 rounded-full text-sm text-gray-700 border"
+                          >
+                            {item.productId?.shortTitle || "Unknown Product"} -
+                            ₹{item.productId?.price || 0}
+                          </div>
+                        ))}
+                        {customer.wishlistItems.length > 3 && (
+                          <div className="bg-gray-200 px-3 py-1 rounded-full text-sm text-gray-600">
+                            +{customer.wishlistItems.length - 3} more
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-500">No wishlist items</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* All Orders List */}
+                <div className="mt-6">
+                  <h4 className="font-medium text-gray-900 mb-3">
+                    All Orders ({customer.orders.length})
+                  </h4>
+                  {customer.orders.length > 0 ? (
+                    <div className="space-y-3 max-h-60 overflow-y-auto">
+                      {customer.orders.map((order) => (
+                        <div
+                          key={order._id}
+                          className="flex items-center justify-between p-3 bg-white border border-gray-400 rounded-lg hover:shadow-sm transition-shadow"
+                        >
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <span className="font-medium text-gray-900">
+                                  ₹{order.totalAmount}
+                                </span>
+                                <span className="ml-2 text-gray-500 text-sm">
+                                  ({order.products.length} items)
+                                </span>
+                              </div>
+                              <div className="flex items-center space-x-3">
+                                <span
+                                  className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                                    order.orderStatus === "Delivered"
+                                      ? "bg-green-100 text-green-800"
+                                      : order.orderStatus === "Shipped"
+                                      ? "bg-blue-100 text-blue-800"
+                                      : order.orderStatus === "Processing"
+                                      ? "bg-purple-100 text-purple-800"
+                                      : "bg-yellow-100 text-yellow-800"
+                                  }`}
+                                >
+                                  {order.orderStatus}
+                                </span>
+                                <span className="text-gray-500 text-sm">
+                                  {new Date(
+                                    order.createdAt
+                                  ).toLocaleDateString()}
+                                </span>
+                                <button
+                                  onClick={() => handleViewOrder(order)}
+                                  className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors"
+                                >
+                                  View Order
+                                </button>
+                              </div>
+                            </div>
+                            <div className="mt-1 text-xs text-gray-400">
+                              Order ID: {order._id.slice(-8)}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500">No orders yet</p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
 
         {filteredCustomers.length === 0 && (
           <div className="text-center py-12">
@@ -240,6 +293,12 @@ const Customers = () => {
           </div>
         )}
       </div>
+      <ViewOrderModal
+        order={viewOrderModal.order}
+        isOpen={viewOrderModal.isOpen}
+        onClose={() => setViewOrderModal({ isOpen: false, order: null })}
+        onUpdateStatus={handleUpdateOrderStatus}
+      />
     </div>
   );
 };

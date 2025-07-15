@@ -25,7 +25,9 @@ const Categories = () => {
         setDeleting(category._id);
         try {
           const response = await fetch(
-            `https://glitzzera-backend.vercel.app/api/categories/${category._id}`,
+            `${import.meta.env.VITE_BACKEND_URL}/api/categories/${
+              category._id
+            }`,
             { method: "DELETE" }
           );
           if (response.ok) {
@@ -76,7 +78,7 @@ const Categories = () => {
         {categories.map((category) => (
           <div
             key={category._id}
-            className="bg-white rounded-lg shadow-sm border p-6"
+            className="bg-white rounded-lg shadow-md border border-gray-300 p-6"
           >
             <div className="flex items-center mb-4">
               <img

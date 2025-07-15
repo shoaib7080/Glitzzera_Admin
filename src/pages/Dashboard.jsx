@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { AppContext } from "../context/AppContext";
 
 const Dashboard = () => {
-  const { stats, products, loading } = useContext(AppContext);
+  const { stats, products, loading, setCurrentPage } = useContext(AppContext);
 
   if (loading) {
     return (
@@ -49,13 +49,22 @@ const Dashboard = () => {
             Quick Actions
           </h3>
           <div className="space-y-2">
-            <button className="w-full text-left px-4 py-2 bg-blue-50 text-blue-700 rounded hover:bg-blue-100">
+            <button
+              onClick={() => setCurrentPage("addProduct")}
+              className="w-full text-left px-4 py-2 bg-blue-50 text-blue-700 rounded hover:bg-blue-100"
+            >
               Add New Product
             </button>
-            <button className="w-full text-left px-4 py-2 bg-green-50 text-green-700 rounded hover:bg-green-100">
+            <button
+              onClick={() => setCurrentPage("orderPage")}
+              className="w-full text-left px-4 py-2 bg-green-50 text-green-700 rounded hover:bg-green-100"
+            >
               View Orders
             </button>
-            <button className="w-full text-left px-4 py-2 bg-purple-50 text-purple-700 rounded hover:bg-purple-100">
+            <button
+              onClick={() => setCurrentPage("categories")}
+              className="w-full text-left px-4 py-2 bg-purple-50 text-purple-700 rounded hover:bg-purple-100"
+            >
               Manage Categories
             </button>
           </div>

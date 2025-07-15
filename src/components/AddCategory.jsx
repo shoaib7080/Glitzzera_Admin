@@ -39,7 +39,7 @@ const AddCategory = () => {
       }
 
       const response = await fetch(
-        "https://glitzzera-backend.vercel.app/api/categories",
+        `${import.meta.env.VITE_BACKEND_URL}/api/categories`,
         {
           method: "POST",
           body: formDataToSend,

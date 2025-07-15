@@ -15,7 +15,7 @@ const Sidebar = () => {
     { key: "dashboard", label: "Dashboard", icon: dashboardIcon },
     { key: "products", label: "Products", icon: productIcon },
     { key: "categories", label: "Categories", icon: categoryIcon },
-    { key: "orders", label: "Orders", icon: cartIcon },
+    { key: "orderPage", label: "Orders", icon: cartIcon },
     { key: "customers", label: "Customers", icon: userIcon },
     { key: "settings", label: "Settings", icon: settingIcon },
   ];
@@ -140,7 +140,7 @@ const Sidebar = () => {
         {/* Logout Button - Fixed position */}
         <button
           onClick={logout}
-          className="absolute bottom-4 left-3 w-10 h-10 rounded-lg transition-all duration-200 text-gray-300 hover:text-white hover:bg-red-500/10 flex items-center justify-center"
+          className="absolute top-88 left-1 w-10 h-10 rounded-lg transition-all duration-200 text-gray-300 hover:text-white hover:bg-red-500/10 flex items-center justify-center"
           title={!sidebarOpen ? "Logout" : undefined}
         >
           <svg
@@ -190,7 +190,7 @@ const Sidebar = () => {
             {/* Logout text */}
             <button
               onClick={logout}
-              className="absolute bottom-4 left-4 right-4 text-left px-3 py-2 rounded-lg transition-all duration-200 text-gray-300 hover:text-white hover:bg-red-500/10"
+              className="absolute top-88 left-2 right-4 text-left px-3 py-2 rounded-lg transition-all duration-200 text-gray-300 hover:text-white hover:bg-red-500/10"
             >
               <span className="font-light">Logout</span>
             </button>
