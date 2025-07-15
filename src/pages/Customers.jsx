@@ -9,6 +9,7 @@ const Customers = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedCustomer, setExpandedCustomer] = useState(null);
+  const [addresses, setAddresses] = useState({});
   const [viewOrderModal, setViewOrderModal] = useState({
     isOpen: false,
     order: null,
@@ -39,8 +40,30 @@ const Customers = () => {
       customer.user.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const fetchAddresses = async (userId) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/addresses/${userId}`
+      );
+      const data = await response.json();
+      setAddresses((prev) => ({ ...prev, [userId]: data }));
+    } catch (error) {
+      console.error("Error fetching addresses:", error);
+      setAddresses((prev) => ({ ...prev, [userId]: [] }));
+    }
+  };
+
   const toggleExpand = (customerId) => {
-    setExpandedCustomer(expandedCustomer === customerId ? null : customerId);
+    if (expandedCustomer === customerId) {
+      setExpandedCustomer(null);
+    } else {
+      setExpandedCustomer(customerId);
+      // Fetch addresses when expanding
+      const customer = customers.find((c) => c.user._id === customerId);
+      if (customer && !addresses[customerId]) {
+        fetchAddresses(customerId);
+      }
+    }
   };
 
   const handleViewOrder = async (order) => {
@@ -217,66 +240,110 @@ const Customers = () => {
                     )}
                   </div>
                 </div>
-
-                {/* All Orders List */}
-                <div className="mt-6">
-                  <h4 className="font-medium text-gray-900 mb-3">
-                    All Orders ({customer.orders.length})
-                  </h4>
-                  {customer.orders.length > 0 ? (
-                    <div className="space-y-3 max-h-60 overflow-y-auto">
-                      {customer.orders.map((order) => (
-                        <div
-                          key={order._id}
-                          className="flex items-center justify-between p-3 bg-white border border-gray-400 rounded-lg hover:shadow-sm transition-shadow"
-                        >
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <span className="font-medium text-gray-900">
-                                  ₹{order.totalAmount}
-                                </span>
-                                <span className="ml-2 text-gray-500 text-sm">
-                                  ({order.products.length} items)
-                                </span>
-                              </div>
-                              <div className="flex items-center space-x-3">
-                                <span
-                                  className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                                    order.orderStatus === "Delivered"
-                                      ? "bg-green-100 text-green-800"
-                                      : order.orderStatus === "Shipped"
-                                      ? "bg-blue-100 text-blue-800"
-                                      : order.orderStatus === "Processing"
-                                      ? "bg-purple-100 text-purple-800"
-                                      : "bg-yellow-100 text-yellow-800"
-                                  }`}
-                                >
-                                  {order.orderStatus}
-                                </span>
-                                <span className="text-gray-500 text-sm">
-                                  {new Date(
-                                    order.createdAt
-                                  ).toLocaleDateString()}
-                                </span>
-                                <button
-                                  onClick={() => handleViewOrder(order)}
-                                  className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors"
-                                >
-                                  View Order
-                                </button>
-                              </div>
+                {/* Orders and Addresses Split */}
+                <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Orders List */}
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-3">
+                      All Orders ({customer.orders.length})
+                    </h4>
+                    {customer.orders.length > 0 ? (
+                      <div className="space-y-3 max-h-60 overflow-y-auto">
+                        {customer.orders.map((order) => (
+                          <div
+                            key={order._id}
+                            className="p-3 bg-white border border-gray-300 rounded-lg hover:shadow-sm transition-shadow"
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="font-medium text-gray-900">
+                                ₹{order.totalAmount}
+                              </span>
+                              <span
+                                className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                                  order.orderStatus === "Delivered"
+                                    ? "bg-green-100 text-green-800"
+                                    : order.orderStatus === "Shipped"
+                                    ? "bg-blue-100 text-blue-800"
+                                    : order.orderStatus === "Processing"
+                                    ? "bg-purple-100 text-purple-800"
+                                    : "bg-yellow-100 text-yellow-800"
+                                }`}
+                              >
+                                {order.orderStatus}
+                              </span>
                             </div>
-                            <div className="mt-1 text-xs text-gray-400">
-                              Order ID: {order._id.slice(-8)}
+                            <div className="text-sm text-gray-500 mb-2">
+                              {order.products.length} items •{" "}
+                              {new Date(order.createdAt).toLocaleDateString()}
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <div className="text-xs text-gray-400">
+                                ID: {order._id.slice(-8)}
+                              </div>
+                              <button
+                                onClick={() => handleViewOrder(order)}
+                                className="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 transition-colors"
+                              >
+                                View
+                              </button>
                             </div>
                           </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-500">No orders yet</p>
+                    )}
+                  </div>
+
+                  {/* Addresses List */}
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-3">
+                      Saved Addresses (
+                      {addresses[customer.user._id]?.length || 0})
+                    </h4>
+                    {addresses[customer.user._id] ? (
+                      addresses[customer.user._id].length > 0 ? (
+                        <div className="space-y-3 max-h-60 overflow-y-auto">
+                          {addresses[customer.user._id].map((address) => (
+                            <div
+                              key={address._id}
+                              className="p-3 bg-white border border-gray-300 rounded-lg"
+                            >
+                              <div className="flex justify-between items-start mb-2">
+                                <span className="text-sm font-medium text-gray-900">
+                                  {address.type}
+                                </span>
+                                <span className="text-xs text-gray-500">
+                                  {new Date(
+                                    address.createdAt
+                                  ).toLocaleDateString()}
+                                </span>
+                              </div>
+                              <div className="text-sm text-gray-700">
+                                <p>
+                                  {address.houseNo}, {address.address1}
+                                </p>
+                                {address.address2 && <p>{address.address2}</p>}
+                                <p>{address.landmark}</p>
+                                <p>
+                                  {address.city}, {address.state} -{" "}
+                                  {address.pincode}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-gray-500">No orders yet</p>
-                  )}
+                      ) : (
+                        <p className="text-sm text-gray-500">
+                          No saved addresses
+                        </p>
+                      )
+                    ) : (
+                      <p className="text-sm text-gray-500">
+                        Loading addresses...
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             )}

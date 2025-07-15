@@ -10,6 +10,9 @@ import Login from "./pages/Login";
 import AddProduct from "./components/AddProduct";
 import AddCategory from "./components/AddCategory";
 import OrderPage from "./pages/OrderPage";
+import Coupons from "./pages/Coupons";
+import AddCoupon from "./components/AddCoupon";
+import CategoryProducts from "./components/CategoryProducts";
 
 const App = () => {
   const context = useContext(AppContext);
@@ -47,6 +50,12 @@ const App = () => {
         return <OrderPage />;
       case "customers":
         return <Customers />;
+      case "coupons":
+        return <Coupons />;
+      case "addCoupon":
+        return <AddCoupon />;
+      case "categoryProducts":
+        return <CategoryProducts />;
       default:
         return <Dashboard />;
     }
@@ -54,7 +63,7 @@ const App = () => {
 
   // Main layout
   return (
-    <div className="flex bg-gray-100 min-h-screen overflow-hidden">
+    <div className="flex bg-gray-100 min-h-screen overflow-y-hidden">
       <Sidebar />
       <div className="flex-1 ml-10 md:ml-64">{renderPage()}</div>
     </div>

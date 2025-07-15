@@ -4,8 +4,14 @@ import { AppContext } from "../context/AppContext";
 import EditCategoryModal from "../components/EditCategoryModal";
 
 const Categories = () => {
-  const { categories, products, loading, fetchCategories, setCurrentPage } =
-    useContext(AppContext);
+  const {
+    categories,
+    products,
+    loading,
+    fetchCategories,
+    setCurrentPage,
+    setSelectedCategory,
+  } = useContext(AppContext);
   const [deleting, setDeleting] = useState(null);
   const [editingCategory, setEditingCategory] = useState(null);
 
@@ -90,7 +96,13 @@ const Categories = () => {
                 }}
               />
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3
+                  onClick={() => {
+                    setSelectedCategory(category);
+                    setCurrentPage("categoryProducts");
+                  }}
+                  className="text-lg font-semibold text-gray-900 cursor-pointer hover:text-blue-600"
+                >
                   {category.catname}
                 </h3>
                 <p className="text-sm text-gray-500">

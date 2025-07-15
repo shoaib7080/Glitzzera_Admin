@@ -13,6 +13,7 @@ const AppContextProvider = ({ children }) => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   // States for Orders
   const [orders, setOrders] = useState([]);
@@ -172,6 +173,8 @@ const AppContextProvider = ({ children }) => {
     orderLoading,
     selectedOrder,
     message,
+    selectedCategory,
+    setSelectedCategory,
     toggleSidebar,
     login,
     logout,

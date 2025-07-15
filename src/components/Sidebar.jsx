@@ -6,6 +6,7 @@ import categoryIcon from "../assets/icons/category.svg";
 import cartIcon from "../assets/icons/cart.svg";
 import userIcon from "../assets/icons/user.svg";
 import settingIcon from "../assets/icons/setting.svg";
+import couponIcon from "../assets/icons/coupon.svg";
 
 const Sidebar = () => {
   const { currentPage, setCurrentPage, logout, sidebarOpen, toggleSidebar } =
@@ -17,6 +18,7 @@ const Sidebar = () => {
     { key: "categories", label: "Categories", icon: categoryIcon },
     { key: "orderPage", label: "Orders", icon: cartIcon },
     { key: "customers", label: "Customers", icon: userIcon },
+    { key: "coupons", label: "Coupons", icon: couponIcon },
     { key: "settings", label: "Settings", icon: settingIcon },
   ];
 
