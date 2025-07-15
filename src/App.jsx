@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { AppContext } from "./context/AppContext";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
@@ -16,8 +16,19 @@ import CategoryProducts from "./components/CategoryProducts";
 
 const App = () => {
   const context = useContext(AppContext);
-
   const { currentPage, isAuthenticated, login, loading } = context;
+  const [initialized, setInitialized] = useState(false);
+
+  useEffect(() => {
+    OneSignal.init({
+      appId: "f24916b5-6d3b-4f2b-b217-bb79311509bd", // From OneSignal dashboard
+      allowLocalhostAsSecureOrigin: true, // For local testing
+      notifyButton: { enable: true }, // Optional: Shows subscription bell
+    }).then(() => {
+      setInitialized(true);
+      OneSignal.Slidedown.promptPush(); // Prompt for permission
+    });
+  }, []);
 
   // Show loading screen while checking auth
   if (loading) {
