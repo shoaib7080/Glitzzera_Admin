@@ -23,7 +23,7 @@ const Sidebar = () => {
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden md:flex bg-gradient-to-b from-gray-900 to-gray-800 text-white w-64 min-h-screen p-6 flex-col">
+      <div className="hidden md:flex fixed left-0 top-0 z-40 bg-gradient-to-b from-gray-900 to-gray-800 text-white w-64 min-h-screen p-6 flex-col ">
         <div className="mb-10">
           <h2 className="text-3xl font-light bg-gradient-to-r from-amber-400 to-rose-400 bg-clip-text text-transparent">
             Glitzzera
@@ -78,7 +78,7 @@ const Sidebar = () => {
       </div>
 
       {/* Mobile Sidebar - Fixed width container */}
-      <div className="md:hidden bg-gradient-to-b from-gray-900 to-gray-800 text-white w-12 min-h-screen fixed z-50">
+      <div className="md:hidden fixed left-0 top-0 bg-gradient-to-b from-gray-900 to-gray-800 text-white w-12 min-h-screen z-50">
         {/* Toggle Button - Fixed position */}
         <button
           onClick={toggleSidebar}

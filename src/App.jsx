@@ -54,9 +54,9 @@ const App = () => {
 
   // Main layout
   return (
-    <div className="flex bg-gray-100 min-h-screen">
+    <div className="flex bg-gray-100 min-h-screen overflow-hidden">
       <Sidebar />
-      <div className="flex-1 ml-12 md:ml-0">{renderPage()}</div>
+      <div className="flex-1 ml-10 md:ml-64">{renderPage()}</div>
     </div>
   );
 };
