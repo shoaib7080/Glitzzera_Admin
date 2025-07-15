@@ -13,6 +13,7 @@ import OrderPage from "./pages/OrderPage";
 import Coupons from "./pages/Coupons";
 import AddCoupon from "./components/AddCoupon";
 import CategoryProducts from "./components/CategoryProducts";
+import OneSignal from "react-onesignal";
 
 const App = () => {
   const context = useContext(AppContext);
